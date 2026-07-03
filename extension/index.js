@@ -2484,7 +2484,7 @@ Is it scaring you off?`,
   };
   function GetSCMC() {
     const script = document.createElement("script");
-    script.src = chrome.runtime.getURL("inject.js");
+    script.src = browser.runtime.getURL("inject.js");
     (document.head || document.documentElement).appendChild(script);
     script.remove();
     window.addEventListener("message", (event) => {
@@ -2532,6 +2532,13 @@ Is it scaring you off?`,
       }).catch((error) => console.error("Error fetching:", error));
     }, 1e3);
   }
+  document.querySelectorAll('.details-cell[class*="-combo--100"]').forEach((el) => {
+    el.classList.forEach((cls) => {
+      if (cls.endsWith("-combo--100")) {
+        el.classList.replace(cls, cls.replace("-combo--100", "-combo--300"));
+      }
+    });
+  });
 
   // src/main-features/modules/windows.ts
   var BaseWindow = class {
@@ -7055,13 +7062,10 @@ Is it scaring you off?`,
     defaultSettings() {
       return {};
     }
-    // hier geen slow tasks doen aub
+    // (Required): Gets called when the content element of the widget needs to be
+    // created (return html element). hier geen slow tasks doen aub
     async createContent() {
       return;
-    }
-    // (Required): Gets called when the content element of the widget needs to be
-    // created (return html element). (Don't do slow tasks in here)
-    async createContent() {
     }
     // Gets called when the preview element needs to be created (return html
     // element) NOTE: preview and content never exist at the same time

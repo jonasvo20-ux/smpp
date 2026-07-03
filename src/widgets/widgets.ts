@@ -339,14 +339,11 @@ export class WidgetBase {
   defaultSettings() {
     return {};
   }
-  // hier geen slow tasks doen aub
+  // (Required): Gets called when the content element of the widget needs to be
+  // created (return html element). hier geen slow tasks doen aub
   async createContent(): Promise<any> {
     return;
   }
-
-  // (Required): Gets called when the content element of the widget needs to be
-  // created (return html element). (Don't do slow tasks in here)
-  async createContent() {}
   // Gets called when the preview element needs to be created (return html
   // element) NOTE: preview and content never exist at the same time
   async createPreview() {
