@@ -13267,7 +13267,7 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
     stationSearchCache = Array.isArray(stationField) ? stationField : [stationField];
     return stationSearchCache;
   }
-  async function createDepartureCard(departure, container, signal) {
+  async function createDepartureCard(departure, container, expandedTracker, signal) {
     if (signal?.aborted) return;
     const trainNumber = departure.vehicleinfo?.shortname || departure.vehicle || "Onbekend";
     const destination = departure.direction?.name || departure.station || "-";
@@ -13377,6 +13377,14 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
       routePreview.appendChild(routeStops);
     };
     const setExpanded = (expanded) => {
+      if (expanded) {
+        if (expandedTracker.card && expandedTracker.card !== card) {
+          expandedTracker.card.classList.remove("expanded");
+        }
+        expandedTracker.card = card;
+      } else if (expandedTracker.card === card) {
+        expandedTracker.card = null;
+      }
       card.classList.toggle("expanded", expanded);
     };
     const loadVehicleStops = async () => {
@@ -13575,6 +13583,7 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
       await this.renderTrains(signal);
     }
     async renderTrains(signal) {
+      const expandedTracker = { card: null };
       for (const departure of this.cachedDepartures.slice(
         0,
         this.displayedTrainCount
@@ -13583,6 +13592,7 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
         await createDepartureCard(
           departure,
           this.elements.bottomContainer,
+          expandedTracker,
           signal
         );
         if (signal?.aborted) return;
@@ -13598,12 +13608,52 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
       const showMoreButton = document.createElement("button");
       showMoreButton.classList.add("showMoreTrainsButton");
       showMoreButton.innerText = "Meer";
-      showMoreButton.addEventListener("click", () => {
+      showMoreButton.addEventListener("click", async () => {
         this.displayedTrainCount += 5;
+        if (this.displayedTrainCount > this.cachedDepartures.length) {
+          showMoreButton.disabled = true;
+          showMoreButton.innerText = "Laden...";
+          await this.fetchMoreDepartures();
+        }
         this.elements.bottomContainer.innerHTML = "";
         this.renderTrains();
       });
       this.elements.bottomContainer.appendChild(showMoreButton);
+    }
+    async fetchMoreDepartures() {
+      const stationId = this.settings.station?.id;
+      if (!stationId || !this.cachedDepartures.length) return;
+      const now = Date.now();
+      if (now - this.lastLiveboardFetchTime < this.minLiveboardFetchInterval) {
+        return;
+      }
+      this.lastLiveboardFetchTime = now;
+      const lastDeparture = this.cachedDepartures[this.cachedDepartures.length - 1];
+      const anchorDate = new Date((Number(lastDeparture.time) + 60) * 1e3);
+      const dateParam = `${anchorDate.getDate().toString().padStart(2, "0")}${(anchorDate.getMonth() + 1).toString().padStart(2, "0")}${anchorDate.getFullYear().toString().slice(-2)}`;
+      const timeParam = `${anchorDate.getHours().toString().padStart(2, "0")}${anchorDate.getMinutes().toString().padStart(2, "0")}`;
+      let liveboardData;
+      try {
+        liveboardData = await fetchIRailData(
+          `https://api.irail.be/v1/liveboard/?id=${encodeURIComponent(
+            stationId
+          )}&format=json&lang=nl&arrdep=departure&alerts=false&date=${dateParam}&time=${timeParam}`
+        );
+      } catch (error) {
+        return;
+      }
+      let newDepartures = liveboardData?.departures?.departure || [];
+      if (!Array.isArray(newDepartures)) {
+        newDepartures = [newDepartures];
+      }
+      const existingKeys = new Set(
+        this.cachedDepartures.map((d3) => `${d3.vehicle}-${d3.time}`)
+      );
+      const uniqueNewDepartures = newDepartures.filter(
+        (d3) => !existingKeys.has(`${d3.vehicle}-${d3.time}`)
+      );
+      this.cachedDepartures = this.cachedDepartures.concat(uniqueNewDepartures);
+      this.cachedDepartures.sort((a5, b3) => (a5.time || 0) - (b3.time || 0));
     }
     addShowLessTrainsButton() {
       const showLessButton = document.createElement("button");
