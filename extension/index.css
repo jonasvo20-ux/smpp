@@ -1275,6 +1275,12 @@ input.weather-location-input:focus {
 .trainCancelled .statusLabel {
   color: #ff5252;
 }
+.glass .routePreview {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border-color: transparent !important;
+  padding: 0 !important;
+}
 .routePreview {
   margin-top: 12px;
   display: none;
@@ -1304,6 +1310,14 @@ input.weather-location-input:focus {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+.glass .routeStopItem {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: var(--small-blur) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+.glass .routeStopItem::before {
+  background: rgba(255, 255, 255, 0.15);
 }
 .routeStopItem {
   position: relative;
