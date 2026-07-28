@@ -689,6 +689,12 @@ class NmbsWidget extends WidgetBase {
     showMoreButton.addEventListener("click", async () => {
       this.displayedTrainCount += 5;
       if (this.displayedTrainCount > this.cachedDepartures.length) {
+        const now = Date.now();
+        if (now - this.lastLiveboardFetchTime < this.minLiveboardFetchInterval) {
+          this.elements.bottomContainer!.innerHTML = "";
+          this.renderTrains();
+          return;
+        }
         showMoreButton.disabled = true;
         showMoreButton.innerText = "Laden...";
         await this.fetchMoreDepartures();
