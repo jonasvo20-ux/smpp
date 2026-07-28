@@ -13153,7 +13153,7 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
       return departure.via.map(normalizeStopData);
     }
     if (typeof departure.via === "string") {
-      return departure.via.split(/\s*,\s*/).filter(Boolean).map((station) => ({ station }));
+      return departure.via.split(/\s*,\s*/).filter(Boolean).map((station) => ({ station, delay: 0, canceled: false }));
     }
     if (Array.isArray(departure.stops)) {
       return departure.stops.map(normalizeStopData);
@@ -13374,7 +13374,7 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
         item.appendChild(rightDetails);
         routeStops.appendChild(item);
       });
-      routePreview.appendChild(routeStops);
+      routePreview.replaceChildren(routeStops);
     };
     const setExpanded = (expanded) => {
       if (expanded) {
@@ -13579,7 +13579,7 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
       this.hideInfo();
       departures.sort((a5, b3) => (a5.time || 0) - (b3.time || 0));
       this.cachedDepartures = departures;
-      this.displayedTrainCount = 5;
+      this.displayedTrainCount = Number(this.settings.maxTrains) || 5;
       await this.renderTrains(signal);
     }
     async renderTrains(signal) {
@@ -13609,11 +13609,18 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
       showMoreButton.classList.add("showMoreTrainsButton");
       showMoreButton.innerText = "Meer";
       showMoreButton.addEventListener("click", async () => {
+        const previousTrainCount = this.displayedTrainCount;
         this.displayedTrainCount += 5;
         if (this.displayedTrainCount > this.cachedDepartures.length) {
           showMoreButton.disabled = true;
           showMoreButton.innerText = "Laden...";
-          await this.fetchMoreDepartures();
+          const fetched = await this.fetchMoreDepartures();
+          if (!fetched) {
+            this.displayedTrainCount = previousTrainCount;
+            showMoreButton.disabled = false;
+            showMoreButton.innerText = "Meer";
+            return;
+          }
         }
         this.elements.bottomContainer.innerHTML = "";
         this.renderTrains();
@@ -13622,10 +13629,10 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
     }
     async fetchMoreDepartures() {
       const stationId = this.settings.station?.id;
-      if (!stationId || !this.cachedDepartures.length) return;
+      if (!stationId || !this.cachedDepartures.length) return false;
       const now = Date.now();
       if (now - this.lastLiveboardFetchTime < this.minLiveboardFetchInterval) {
-        return;
+        return false;
       }
       this.lastLiveboardFetchTime = now;
       const lastDeparture = this.cachedDepartures[this.cachedDepartures.length - 1];
@@ -13640,7 +13647,7 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
           )}&format=json&lang=nl&arrdep=departure&alerts=false&date=${dateParam}&time=${timeParam}`
         );
       } catch (error) {
-        return;
+        return false;
       }
       let newDepartures = liveboardData?.departures?.departure || [];
       if (!Array.isArray(newDepartures)) {
@@ -13654,6 +13661,7 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
       );
       this.cachedDepartures = this.cachedDepartures.concat(uniqueNewDepartures);
       this.cachedDepartures.sort((a5, b3) => (a5.time || 0) - (b3.time || 0));
+      return true;
     }
     addShowLessTrainsButton() {
       const showLessButton = document.createElement("button");

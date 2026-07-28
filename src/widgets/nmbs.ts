@@ -84,7 +84,7 @@ function normalizeDepartureStops(departure: any): StopInfo[] {
     return departure.via
       .split(/\s*,\s*/)
       .filter(Boolean)
-      .map((station: string) => ({ station }));
+      .map((station: string) => ({ station, delay: 0, canceled: false }));
   }
   if (Array.isArray(departure.stops)) {
     return departure.stops.map(normalizeStopData);
@@ -395,8 +395,7 @@ async function createDepartureCard(
       routeStops.appendChild(item);
     });
 
-    routePreview.appendChild(routeStops);
-  };
+     routePreview.replaceChildren(routeStops);  };
 
   const setExpanded = (expanded: boolean) => {
     if (expanded) {
@@ -495,7 +494,7 @@ class NmbsWidget extends WidgetBase {
   currentLiveboardAbortController: AbortController | null;
   displayedTrainCount: number;
   cachedDepartures: any[];
-  searchDebounceTimer: NodeJS.Timeout | null;
+  searchDebounceTimer: ReturnType<typeof setTimeout> | null;
   lastLiveboardFetchTime: number;
   readonly minLiveboardFetchInterval: number = 5000; // 5 seconden minimum tussen zoekopdrachten anders kunnen wee een ban krijgen
   elements: {
@@ -652,8 +651,7 @@ class NmbsWidget extends WidgetBase {
     this.hideInfo();
     departures.sort((a: any, b: any) => (a.time || 0) - (b.time || 0));
     this.cachedDepartures = departures;
-    this.displayedTrainCount = 5;
-
+     this.displayedTrainCount = Number(this.settings.maxTrains) || 5;
     await this.renderTrains(signal);
   }
 
@@ -687,17 +685,20 @@ class NmbsWidget extends WidgetBase {
     showMoreButton.classList.add("showMoreTrainsButton");
     showMoreButton.innerText = "Meer";
     showMoreButton.addEventListener("click", async () => {
+      const previousTrainCount = this.displayedTrainCount;
       this.displayedTrainCount += 5;
       if (this.displayedTrainCount > this.cachedDepartures.length) {
-        const now = Date.now();
-        if (now - this.lastLiveboardFetchTime < this.minLiveboardFetchInterval) {
-          this.elements.bottomContainer!.innerHTML = "";
-          this.renderTrains();
-          return;
-        }
         showMoreButton.disabled = true;
         showMoreButton.innerText = "Laden...";
-        await this.fetchMoreDepartures();
+        const fetched = await this.fetchMoreDepartures();
+        if (!fetched) {
+          // Rate limit of mislukte fetch: zet alles terug zoals het was, anders
+          // blijft de knop uitgeschakeld op "Laden..." hangen.
+          this.displayedTrainCount = previousTrainCount;
+          showMoreButton.disabled = false;
+          showMoreButton.innerText = "Meer";
+          return;
+        }
       }
       this.elements.bottomContainer!.innerHTML = "";
       this.renderTrains();
@@ -705,14 +706,14 @@ class NmbsWidget extends WidgetBase {
     this.elements.bottomContainer!.appendChild(showMoreButton);
   }
 
-  async fetchMoreDepartures() {
+  async fetchMoreDepartures(): Promise<boolean> {
     const stationId = this.settings.station?.id;
-    if (!stationId || !this.cachedDepartures.length) return;
+    if (!stationId || !this.cachedDepartures.length) return false;
 
     // Zelfde rate limiting als de liveboard fetch, anders kunnen we een ban krijgen van iRail.
     const now = Date.now();
     if (now - this.lastLiveboardFetchTime < this.minLiveboardFetchInterval) {
-      return;
+      return false;
     }
     this.lastLiveboardFetchTime = now;
 
@@ -738,7 +739,7 @@ class NmbsWidget extends WidgetBase {
         )}&format=json&lang=nl&arrdep=departure&alerts=false&date=${dateParam}&time=${timeParam}`
       );
     } catch (error) {
-      return;
+      return false;
     }
 
     let newDepartures = liveboardData?.departures?.departure || [];
@@ -755,6 +756,7 @@ class NmbsWidget extends WidgetBase {
 
     this.cachedDepartures = this.cachedDepartures.concat(uniqueNewDepartures);
     this.cachedDepartures.sort((a: any, b: any) => (a.time || 0) - (b.time || 0));
+    return true;
   }
 
   addShowLessTrainsButton() {
