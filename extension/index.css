@@ -1092,9 +1092,9 @@ input.weather-location-input:focus {
   flex-direction: column;
 }
 .enableAnimations .trainCard {
-  animation: delijnCardAppear 0.3s ease-in-out 0ms 1;
+  animation: nmbsCardAppear 0.3s ease-in-out 0ms 1;
 }
-@keyframes delijnCardAppear {
+@keyframes nmbsCardAppear {
   0% {
     transform: translateY(-50%);
     opacity: 0;
@@ -1124,24 +1124,6 @@ input.weather-location-input:focus {
   font-size: 20px;
   border-radius: 10px;
   padding: 4px;
-}
-.trainCard.lijnCardCancelled .trainCardBottom .timeUntilDeparture {
-  color: var(--color-red);
-}
-.trainCard.lijnCardNoData .arrivalTimeDeviation {
-  color: var(--color-red);
-}
-.trainCard.lijnCardCancelled .trainCardBottom .time,
-.trainCard.lijnCardCancelled .trainCardTop .trainDestination {
-  text-decoration: line-through;
-  text-decoration-color: var(--color-red);
-  text-decoration-thickness: 3px;
-}
-.trainNumber.trainLijnNumber {
-  font-size: 12px;
-  width: 35px;
-  border-radius: 7.5px;
-  border-width: 2px;
 }
 .enableAnimations .trainCardStation {
   transition-property:
@@ -1451,7 +1433,7 @@ input.weather-location-input:focus {
     origin;
   transition: 0.2s ease-in-out !important;
 }
-.enableAnimations .nmbsSearchButton:hover > .delijnSearchIcon {
+.enableAnimations .nmbsSearchButton:hover > .searchIcon {
   transform-origin: bottom bottom;
   animation: searchIconJiggle 0.5s ease-in-out 0ms 1;
 }
@@ -1520,7 +1502,7 @@ input.weather-location-input:focus {
   cursor: pointer;
 }
 .enableAnimations .showMoreStationsButton {
-  animation: delijnCardAppear 0.3s ease-in-out 0ms 1;
+  animation: nmbsCardAppear 0.3s ease-in-out 0ms 1;
   transition-property:
     background-color,
     border-color,
@@ -1547,7 +1529,7 @@ input.weather-location-input:focus {
   cursor: pointer;
 }
 .enableAnimations .showMoreTrainsButton {
-  animation: delijnCardAppear 0.3s ease-in-out 0ms 1;
+  animation: nmbsCardAppear 0.3s ease-in-out 0ms 1;
   transition-property:
     background-color,
     border-color,
@@ -1574,7 +1556,7 @@ input.weather-location-input:focus {
   cursor: pointer;
 }
 .enableAnimations .showLessTrainsButton {
-  animation: delijnCardAppear 0.3s ease-in-out 0ms 1;
+  animation: nmbsCardAppear 0.3s ease-in-out 0ms 1;
   transition-property:
     background-color,
     border-color,
