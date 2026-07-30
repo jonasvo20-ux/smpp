@@ -13126,6 +13126,9 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
     const minutes = Math.round(delayValue / 60);
     return minutes === 0 ? "+1 min" : `+${minutes} min`;
   }
+  function buildTicketPurchaseUrl() {
+    return "https://www.belgiantrain.be/en";
+  }
   function getSearchableStationName(station) {
     return [station.standardname, station.name, station.id].join(" ").toLowerCase();
   }
@@ -13267,7 +13270,7 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
     stationSearchCache = Array.isArray(stationField) ? stationField : [stationField];
     return stationSearchCache;
   }
-  async function createDepartureCard(departure, container, expandedTracker, signal) {
+  async function createDepartureCard(departure, container, expandedTracker, originStationName, signal) {
     if (signal?.aborted) return;
     const trainNumber = departure.vehicleinfo?.shortname || departure.vehicle || "Onbekend";
     const destination = departure.direction?.name || departure.station || "-";
@@ -13276,6 +13279,8 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
     const delayText = formatDelay(departure.delay, departure.canceled);
     const card = document.createElement("div");
     card.classList.add("trainCard");
+    const ticketUrl = buildTicketPurchaseUrl();
+    card.dataset["ticketUrl"] = ticketUrl;
     const canceledFlag = departure.canceled === "1" || departure.canceled === 1 || departure.canceled === true;
     if (canceledFlag) {
       card.classList.add("trainCancelled");
@@ -13325,6 +13330,15 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
       occupancyBox.textContent = occupancyInfo.label;
       cardBottom.appendChild(occupancyBox);
     }
+    const buyTicketButton = document.createElement("button");
+    buyTicketButton.type = "button";
+    buyTicketButton.classList.add("buyTicketButton");
+    buyTicketButton.textContent = "Ticket";
+    buyTicketButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      window.open(ticketUrl, "_blank", "noopener,noreferrer");
+    });
+    cardBottom.appendChild(buyTicketButton);
     const routePreview = document.createElement("div");
     routePreview.classList.add("routePreview");
     let stops = normalizeDepartureStops(departure);
@@ -13584,6 +13598,7 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
     }
     async renderTrains(signal) {
       const expandedTracker = { card: null };
+      const originStationName = this.settings.station?.standardname || this.settings.station?.name || this.settings.station?.id;
       for (const departure of this.cachedDepartures.slice(
         0,
         this.displayedTrainCount
@@ -13593,6 +13608,7 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
           departure,
           this.elements.bottomContainer,
           expandedTracker,
+          originStationName,
           signal
         );
         if (signal?.aborted) return;

@@ -105,6 +105,31 @@
   white-space: nowrap;
 }
 
+.buyTicketButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: transparent;
+  color: var(--color-accent);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.buyTicketButton:hover {
+  background: var(--color-base02);
+}
+
+.buyTicketButton:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 .occupancy-low {
   border-color: #22c55e;
   background: #052e16;

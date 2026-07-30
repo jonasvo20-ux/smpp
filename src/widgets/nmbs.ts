@@ -34,6 +34,10 @@ function formatDelay(delaySeconds: unknown, canceled: unknown): string {
   return minutes === 0 ? "+1 min" : `+${minutes} min`;
 }
 
+function buildTicketPurchaseUrl(): string {
+  return "https://www.belgiantrain.be/en";
+}
+
 type StopInfo = {
   station: string;
   time?: number;
@@ -249,6 +253,7 @@ async function createDepartureCard(
   departure: any,
   container: HTMLElement,
   expandedTracker: ExpandedCardTracker,
+  originStationName: string | undefined,
   signal?: AbortSignal
 ): Promise<void> {
   if (signal?.aborted) return;
@@ -267,6 +272,9 @@ async function createDepartureCard(
 
   const card = document.createElement("div");
   card.classList.add("trainCard");
+
+  const ticketUrl = buildTicketPurchaseUrl();
+  card.dataset["ticketUrl"] = ticketUrl;
 
   // Add delay status class for styling
   const canceledFlag =
@@ -334,6 +342,16 @@ async function createDepartureCard(
     occupancyBox.textContent = occupancyInfo.label;
     cardBottom.appendChild(occupancyBox);
   }
+
+  const buyTicketButton = document.createElement("button");
+  buyTicketButton.type = "button";
+  buyTicketButton.classList.add("buyTicketButton");
+  buyTicketButton.textContent = "Ticket";
+  buyTicketButton.addEventListener("click", (event: MouseEvent) => {
+    event.stopPropagation();
+    window.open(ticketUrl, "_blank", "noopener,noreferrer");
+  });
+  cardBottom.appendChild(buyTicketButton);
 
   // optional route preview (dropdown-style stop list)
   const routePreview = document.createElement("div");
@@ -658,6 +676,11 @@ class NmbsWidget extends WidgetBase {
 
   async renderTrains(signal?: AbortSignal) {
     const expandedTracker: ExpandedCardTracker = { card: null };
+    const originStationName =
+      this.settings.station?.standardname ||
+      this.settings.station?.name ||
+      this.settings.station?.id;
+
     for (const departure of this.cachedDepartures.slice(
       0,
       this.displayedTrainCount
@@ -667,6 +690,7 @@ class NmbsWidget extends WidgetBase {
         departure,
         this.elements.bottomContainer!,
         expandedTracker,
+        originStationName,
         signal
       );
       if (signal?.aborted) return;
