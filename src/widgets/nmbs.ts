@@ -1,6 +1,7 @@
 import { WidgetBase, registerWidget } from "./widgets.js";
 import { browser } from "../common/utils.js";
 import { searchButtonSvg, loadingSpinnerSvg } from "../fixes-utils/svgs.js";
+import { getExtensionImage } from "../common/utils.js";
 
 let stationSearchCache: any[] | null = null;
 
@@ -945,14 +946,11 @@ class NmbsWidget extends WidgetBase {
     previewElementTitle.classList.add("nmbs-preview-title");
     previewElementTitle.innerText = "NMBS";
 
-    const previewElementIcon = document.createElement("div");
-    previewElementIcon.classList.add("nmbs-icon-128-container");
-    previewElementIcon.style.marginBottom = "1rem";
-    previewElementIcon.innerHTML =
-      "<div style='font-size:5rem;margin:auto;'>🚆</div>";
-
+    const previewImage = document.createElement("img");
+    previewImage.src = getExtensionImage("icons/widgets/train_550x264.png");
+    previewImage.classList.add("nmbs-preview-image");
     previewElement.appendChild(previewElementTitle);
-    previewElement.appendChild(previewElementIcon);
+    previewElement.appendChild(previewImage);
 
     return previewElement;
   }

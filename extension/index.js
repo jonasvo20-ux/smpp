@@ -13821,12 +13821,11 @@ Your version: <b>${data2.plantVersion}</b> is not the newest available version`;
       const previewElementTitle = document.createElement("div");
       previewElementTitle.classList.add("nmbs-preview-title");
       previewElementTitle.innerText = "NMBS";
-      const previewElementIcon = document.createElement("div");
-      previewElementIcon.classList.add("nmbs-icon-128-container");
-      previewElementIcon.style.marginBottom = "1rem";
-      previewElementIcon.innerHTML = "<div style='font-size:5rem;margin:auto;'>\u{1F686}</div>";
+      const previewImage = document.createElement("img");
+      previewImage.src = getExtensionImage("icons/widgets/train_550x264.png");
+      previewImage.classList.add("nmbs-preview-image");
       previewElement.appendChild(previewElementTitle);
-      previewElement.appendChild(previewElementIcon);
+      previewElement.appendChild(previewImage);
       return previewElement;
     }
   };

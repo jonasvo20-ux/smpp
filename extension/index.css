@@ -1594,10 +1594,8 @@ input.weather-location-input:focus {
   font-weight: 700;
   margin-bottom: 0.4rem;
 }
-.nmbs-icon-128-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.nmbs-preview-image {
+  width: 80%;
 }
 .trainTypeBadge {
   border: 2px solid var(--color-accent);
