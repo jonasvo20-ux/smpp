@@ -26,3 +26,23 @@ export async function fetchDelijnData(apiUrl: string) {
     console.error("Error fetching Delijn data:", error);
   }
 }
+export async function fetchIRailData(apiUrl: string) {
+  try {
+    // De URL komt via een runtime message binnen, dus we beperken hem tot iRail
+    // zodat de background script geen willekeurige origins kan ophalen.
+    const url = new URL(apiUrl);
+    if (url.protocol !== "https:" || url.hostname !== "api.irail.be") {
+      throw new Error("Invalid iRail URL");
+    }
+
+    const response = await fetch(url.toString());
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching iRail data:", error);
+    return null;
+  }
+}
