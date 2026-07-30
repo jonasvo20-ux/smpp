@@ -1839,6 +1839,22 @@
       console.error("Error fetching Delijn data:", error);
     }
   }
+  async function fetchIRailData(apiUrl) {
+    try {
+      const url = new URL(apiUrl);
+      if (url.protocol !== "https:" || url.hostname !== "api.irail.be") {
+        throw new Error("Invalid iRail URL");
+      }
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching iRail data:", error);
+      return null;
+    }
+  }
 
   // src/background-scripts/json-loader.ts
   async function loadJSON(path) {
@@ -2437,6 +2453,11 @@
         const delijnData = await fetchDelijnData(message.url);
         sendResponse(delijnData);
         console.log("Delijn appdata fetched and sent.");
+      }
+      if (message.action === "fetchIRailData") {
+        const iRailData = await fetchIRailData(message.url);
+        sendResponse(iRailData);
+        console.log("iRail data fetched and sent.");
       }
       if (message.action === "getDelijnColorData") {
         let delijnColorData = await getDelijnColorData();
