@@ -17,9 +17,9 @@ interface VakTotaal {
   count: number;
 }
 
+const ONVOLDOENDE_GRENS = 0;
 const VOLDOENDE_GRENS = 50;
-const GOED_GRENS = 75;
-const GOED_BEZIG_GRENS = 65;
+const GOED_BEZIG_GRENS = 70;
 const UITSTEKEND_GRENS = 80;
 
 class PuntenWidget extends WidgetBase {
@@ -86,7 +86,8 @@ class PuntenWidget extends WidgetBase {
     if (waarde >= UITSTEKEND_GRENS) return "Uitstekend bezig! 🎉";
     if (waarde >= GOED_BEZIG_GRENS) return "Goed bezig, blijf zo verdergaan!";
     if (waarde >= VOLDOENDE_GRENS) return "Het kan beter, blijf oefenen.";
-    return "Let op, dit moet dringend beter.";
+    if (waarde >= ONVOLDOENDE_GRENS) return "dit is een buis kom op niet opgeven";
+    return "Het is tijd om hulp te vragen en te verbeteren.";
   }
 
   override async createContent() {
@@ -163,7 +164,7 @@ class PuntenWidget extends WidgetBase {
           const clampedWidth = Math.max(0, Math.min(100, vak.average));
           bar.style.width = `${clampedWidth}%`;
           const barKleur =
-            vak.average >= GOED_GRENS ? "#5cc951" : vak.average >= VOLDOENDE_GRENS ? "#ffd353" : "#e14448";
+            vak.average >= GOED_BEZIG_GRENS ? "#5cc951" : vak.average >= VOLDOENDE_GRENS ? "#ffd353" : "#e14448";
           bar.style.setProperty("background-color", barKleur, "important");
           barContainer.appendChild(bar);
 
