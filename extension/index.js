@@ -14769,6 +14769,10 @@ ${code}`;
       subtitle.classList.add("punten-preview-subtitle");
       subtitle.innerText = "Gemiddeldes & voortgang";
       previewContainer.appendChild(subtitle);
+      const image = document.createElement("img");
+      image.src = getExtensionImage("icons/widgets/punten_490x626.png");
+      image.classList.add("punten-preview-image");
+      previewContainer.appendChild(image);
       return previewContainer;
     }
   };
