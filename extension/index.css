@@ -4358,6 +4358,109 @@ button.open-theme-editor-button:hover {
   aspect-ratio: 1;
 }
 
+/* src/styles/smpp-styles/punten.css */
+.punten-widget {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.punten-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+}
+.punten-body {
+  display: flex;
+  flex-direction: column;
+}
+.punten-overall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-base02);
+}
+.punten-overall-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.punten-overall-message {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  opacity: 0.85;
+  margin-top: 0.25rem;
+}
+.punten-verbeter-message {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+.punten-vakken-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.punten-vak-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.punten-vak-name {
+  flex: 0 0 auto;
+  width: 6.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+.punten-vak-bar-container {
+  flex: 1;
+  height: 0.5rem;
+  background-color: var(--color-base02);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.punten-vak-bar {
+  height: 100%;
+  border-radius: 1rem;
+  transition: width 0.3s ease;
+}
+.punten-vak-value {
+  flex: 0 0 auto;
+  width: 3.2rem;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.punten-geen-data {
+  text-align: center;
+  padding: 1rem;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+.punten-widget-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 200px;
+}
+.punten-preview-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+.punten-preview-image {
+  width: auto;
+  max-height: 128px;
+  object-fit: contain;
+  margin-top: 0.5rem;
+}
+
 /* src/styles/fixes/general.css */
 html {
   --color-accent: #191817;

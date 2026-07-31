@@ -16,6 +16,7 @@ import "./styles/smpp-styles/tutorial-widget.css";
 import "./styles/smpp-styles/settings.css";
 import "./styles/smpp-styles/assignments.css";
 import "./styles/smpp-styles/profile.css";
+import "./styles/smpp-styles/punten.css";
 import "./styles/fixes/general.css";
 import "./styles/fixes/login.css";
 import "./styles/fixes/messages.css";
