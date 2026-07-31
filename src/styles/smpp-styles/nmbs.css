@@ -584,6 +584,12 @@
   display: flex;
 }
 
+.nmbs-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .nmbs-preview-title {
   text-align: center;
   font-size: 2.2rem;

@@ -13834,6 +13834,7 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
     }
     async createPreview() {
       const previewElement = document.createElement("div");
+      previewElement.classList.add("nmbs-preview");
       const previewElementTitle = document.createElement("div");
       previewElementTitle.classList.add("nmbs-preview-title");
       previewElementTitle.innerText = "NMBS";

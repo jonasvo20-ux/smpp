@@ -965,6 +965,7 @@ class NmbsWidget extends WidgetBase {
 
   override async createPreview(): Promise<HTMLElement> {
     const previewElement = document.createElement("div");
+    previewElement.classList.add("nmbs-preview");
 
     const previewElementTitle = document.createElement("div");
     previewElementTitle.classList.add("nmbs-preview-title");
