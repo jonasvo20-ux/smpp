@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { WidgetBase, registerWidget } from "./widgets.js";
 import { getSchoolName } from "../fixes-utils/utils.js";
 import { DEBUG, sendDebug } from "../common/utils.js";
@@ -23,11 +22,11 @@ const GOED_BEZIG_GRENS = 65;
 const UITSTEKEND_GRENS = 80;
 
 class PuntenWidget extends WidgetBase {
-  get category() {
+  override get category() {
     return "other";
   }
 
-  get name() {
+  override get name() {
     return "PuntenWidget";
   }
 
@@ -89,7 +88,7 @@ class PuntenWidget extends WidgetBase {
     return "Let op, dit moet dringend beter.";
   }
 
-  async createContent() {
+  override async createContent() {
     const container = document.createElement("div");
     container.classList.add("punten-widget");
 
@@ -188,7 +187,7 @@ class PuntenWidget extends WidgetBase {
     return container;
   }
 
-  async createPreview() {
+  override async createPreview() {
     const previewContainer = document.createElement("div");
     previewContainer.classList.add("punten-widget-preview");
 
