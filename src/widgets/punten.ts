@@ -18,6 +18,7 @@ interface VakTotaal {
 }
 
 const VOLDOENDE_GRENS = 50;
+const GOED_GRENS = 75;
 const GOED_BEZIG_GRENS = 65;
 const UITSTEKEND_GRENS = 80;
 
@@ -161,7 +162,9 @@ class PuntenWidget extends WidgetBase {
           bar.classList.add("punten-vak-bar");
           const clampedWidth = Math.max(0, Math.min(100, vak.average));
           bar.style.width = `${clampedWidth}%`;
-          bar.style.backgroundColor = this.kleurVoorWaarde(vak.average);
+          const barKleur =
+            vak.average >= GOED_GRENS ? "#5cc951" : vak.average >= VOLDOENDE_GRENS ? "#ffd353" : "#e14448";
+          bar.style.setProperty("background-color", barKleur, "important");
           barContainer.appendChild(bar);
 
           const waarde = document.createElement("span");

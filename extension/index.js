@@ -14626,6 +14626,7 @@ ${code}`;
 
   // src/widgets/punten.ts
   var VOLDOENDE_GRENS = 50;
+  var GOED_GRENS = 75;
   var GOED_BEZIG_GRENS = 65;
   var UITSTEKEND_GRENS = 80;
   var PuntenWidget = class extends WidgetBase {
@@ -14736,7 +14737,8 @@ ${code}`;
           bar.classList.add("punten-vak-bar");
           const clampedWidth = Math.max(0, Math.min(100, vak.average));
           bar.style.width = `${clampedWidth}%`;
-          bar.style.backgroundColor = this.kleurVoorWaarde(vak.average);
+          const barKleur = vak.average >= GOED_GRENS ? "#5cc951" : vak.average >= VOLDOENDE_GRENS ? "#ffd353" : "#e14448";
+          bar.style.setProperty("background-color", barKleur, "important");
           barContainer.appendChild(bar);
           const waarde = document.createElement("span");
           waarde.classList.add("punten-vak-value");
