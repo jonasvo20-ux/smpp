@@ -14739,16 +14739,19 @@ ${code}`;
       case "wiki":
         return "Wiki";
       default:
-        break;
+        return void 0;
     }
   }
   function title_prefix() {
-    let subdomain = location.host.split(".")[0].charAt(0).toUpperCase() + location.host.split(".")[0].slice(1);
-    let url = location.pathname;
-    let qstr = new URLSearchParams(location.search);
-    let module = qstr.get("module");
-    if (!url.split("/")[1]) return;
-    let page = url.split("/")[1].toLowerCase();
+    const host = location.host.split(".")[0];
+    if (!host) return;
+    const subdomain = host.charAt(0).toUpperCase() + host.slice(1);
+    const url = location.pathname;
+    const qstr = new URLSearchParams(location.search);
+    const module = qstr.get("module");
+    const pathSegment = url.split("/")[1];
+    if (!pathSegment) return;
+    let page = pathSegment.toLowerCase();
     if (module !== null) {
       page = module.toLowerCase();
     }
@@ -14784,24 +14787,26 @@ ${code}`;
       default:
         break;
     }
-    let topnav_title = document.querySelector(".topnav__title");
-    if (topnav_title) {
-      topnav_title = topnav_title.innerText;
-    }
-    let prefix = vak_prefix(page);
-    if (prefix != void 0) {
+    const topnav_title = document.querySelector(
+      ".topnav__title"
+    )?.innerText;
+    const prefix = vak_prefix(page);
+    if (prefix !== void 0) {
       if (topnav_title) {
         return prefix + " - " + topnav_title;
       } else {
         return prefix;
       }
     }
+    return void 0;
   }
   function titleFix() {
-    let prepend = title_prefix();
-    if (prepend != void 0) {
-      let title = document.querySelector("head > title");
-      title.innerText = prepend + " - Smartschool";
+    const prepend = title_prefix();
+    if (prepend !== void 0) {
+      const title = document.querySelector("head > title");
+      if (title) {
+        title.innerText = prepend + " - Smartschool";
+      }
     }
   }
 
