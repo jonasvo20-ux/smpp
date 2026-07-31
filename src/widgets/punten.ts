@@ -200,11 +200,6 @@ class PuntenWidget extends WidgetBase {
     title.innerText = "Punten";
     previewContainer.appendChild(title);
 
-    const subtitle = document.createElement("div");
-    subtitle.classList.add("punten-preview-subtitle");
-    subtitle.innerText = "Gemiddeldes & voortgang";
-    previewContainer.appendChild(subtitle);
-
     const image = document.createElement("img");
     image.src = getExtensionImage("icons/widgets/punten_490x626.png");
     image.classList.add("punten-preview-image");

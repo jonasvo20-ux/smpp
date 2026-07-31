@@ -4446,18 +4446,12 @@ button.open-theme-editor-button:hover {
   min-height: 200px;
 }
 .punten-preview-title {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-weight: 700;
-}
-.punten-preview-subtitle {
-  font-size: 0.8rem;
-  opacity: 0.75;
-  margin-top: 0.25rem;
 }
 .punten-preview-image {
   width: auto;
-  max-width: 40%;
-  max-height: 100px;
+  max-height: 128px;
   object-fit: contain;
   margin-top: 0.5rem;
 }
