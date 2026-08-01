@@ -10,7 +10,6 @@ const DINO_DUCK_H = 15;
 const GRAVITY = 0.0027;
 const JUMP_VEL = -0.78;
 const BASE_SPEED = 0.225;
-const MAX_SPEED = 0.525;
 const SPEEDUP = 0.00018;
 const CACTUS_W = 12;
 const BIRD_W = 21;
@@ -42,7 +41,7 @@ class DinoWidget extends GameBase {
     return "Dino++";
   }
   override get options(): GameOption[] {
-    return [GameOption.slider("speed", "Speed:", 50, 300, 100)];
+    return [GameOption.slider("speed", "Start speed:", 50, 300, 100)];
   }
 
   #groundY(): number {
@@ -50,8 +49,9 @@ class DinoWidget extends GameBase {
   }
 
   #gameSpeed(): number {
-    const s = Math.min(BASE_SPEED + this.score * SPEEDUP, MAX_SPEED);
-    return s * this.getOpt("speed") * 0.01;
+    return (
+      BASE_SPEED * (this.getOpt("speed") * 0.01) + this.score * SPEEDUP
+    );
   }
 
   #drawGround(ctx: CanvasRenderingContext2D) {
@@ -128,7 +128,7 @@ class DinoWidget extends GameBase {
     }
 
     const speed = this.#gameSpeed();
-    this.spawnTimer = (90 + Math.random() * 180) / speed;
+    this.spawnTimer = (180 + Math.random() * 360) / speed;
   }
 
   #drawObstacle(ctx: CanvasRenderingContext2D, ob: Obstacle) {
@@ -217,7 +217,7 @@ class DinoWidget extends GameBase {
     }
     this.obstacles = this.obstacles.filter((ob) => ob.x > -BIRD_W * 3);
 
-    this.scoreAcc += dt * SCORE_RATE * this.getOpt("speed") * 0.01;
+    this.scoreAcc += dt * SCORE_RATE;
     if (this.scoreAcc >= 1) {
       this.score += Math.floor(this.scoreAcc);
       this.scoreAcc -= Math.floor(this.scoreAcc);

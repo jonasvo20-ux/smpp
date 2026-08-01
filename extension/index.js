@@ -12202,7 +12202,6 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
   var GRAVITY2 = 27e-4;
   var JUMP_VEL = -0.78;
   var BASE_SPEED = 0.225;
-  var MAX_SPEED2 = 0.525;
   var SPEEDUP = 18e-5;
   var CACTUS_W = 12;
   var BIRD_W = 21;
@@ -12226,14 +12225,13 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
       return "Dino++";
     }
     get options() {
-      return [GameOption.slider("speed", "Speed:", 50, 300, 100)];
+      return [GameOption.slider("speed", "Start speed:", 50, 300, 100)];
     }
     #groundY() {
       return this.canvas.height - FLOOR_H2;
     }
     #gameSpeed() {
-      const s4 = Math.min(BASE_SPEED + this.score * SPEEDUP, MAX_SPEED2);
-      return s4 * this.getOpt("speed") * 0.01;
+      return BASE_SPEED * (this.getOpt("speed") * 0.01) + this.score * SPEEDUP;
     }
     #drawGround(ctx) {
       let w2 = this.canvas.width;
@@ -12299,7 +12297,7 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
         });
       }
       const speed = this.#gameSpeed();
-      this.spawnTimer = (90 + Math.random() * 180) / speed;
+      this.spawnTimer = (180 + Math.random() * 360) / speed;
     }
     #drawObstacle(ctx, ob) {
       ctx.fillStyle = themeColor("--color-accent");
@@ -12375,7 +12373,7 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
         }
       }
       this.obstacles = this.obstacles.filter((ob) => ob.x > -BIRD_W * 3);
-      this.scoreAcc += dt * SCORE_RATE * this.getOpt("speed") * 0.01;
+      this.scoreAcc += dt * SCORE_RATE;
       if (this.scoreAcc >= 1) {
         this.score += Math.floor(this.scoreAcc);
         this.scoreAcc -= Math.floor(this.scoreAcc);
