@@ -12194,19 +12194,19 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
   registerWidget(new SpaceInvadersWidget());
 
   // src/games/dino.ts
-  var FLOOR_H2 = 15;
-  var DINO_X = 40;
-  var DINO_W = 16;
-  var DINO_H = 20;
-  var DINO_DUCK_H = 10;
-  var GRAVITY2 = 18e-4;
-  var JUMP_VEL = -0.52;
-  var BASE_SPEED = 0.15;
-  var MAX_SPEED2 = 0.35;
-  var SPEEDUP = 12e-5;
-  var CACTUS_W = 8;
-  var BIRD_W = 14;
-  var BIRD_H = 8;
+  var FLOOR_H2 = 22;
+  var DINO_X = 50;
+  var DINO_W = 24;
+  var DINO_H = 30;
+  var DINO_DUCK_H = 15;
+  var GRAVITY2 = 27e-4;
+  var JUMP_VEL = -0.78;
+  var BASE_SPEED = 0.225;
+  var MAX_SPEED2 = 0.525;
+  var SPEEDUP = 18e-5;
+  var CACTUS_W = 12;
+  var BIRD_W = 21;
+  var BIRD_H = 12;
   var SCORE_RATE = 0.01;
   function themeColor(varName) {
     return getThemeVar(varName) ?? "#000";
@@ -12243,10 +12243,10 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
       ctx.lineWidth = 1;
       ctx.fillRect(0, h4 - FLOOR_H2, w2, FLOOR_H2);
       ctx.strokeRect(0, h4 - FLOOR_H2, w2, FLOOR_H2);
-      for (let i5 = 0; i5 < w2 / 20 * 2; i5++) {
+      for (let i5 = 0; i5 < w2 / 30 * 2; i5++) {
         ctx.beginPath();
-        ctx.moveTo(i5 * 20 + this.bgX, h4 - FLOOR_H2);
-        ctx.lineTo(i5 * 20 + this.bgX + FLOOR_H2, h4);
+        ctx.moveTo(i5 * 30 + this.bgX, h4 - FLOOR_H2);
+        ctx.lineTo(i5 * 30 + this.bgX + FLOOR_H2, h4);
         ctx.stroke();
       }
     }
@@ -12265,58 +12265,58 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
     #drawDino(ctx) {
       const box = this.#dinoHitbox();
       ctx.fillStyle = themeColor("--color-accent");
-      ctx.fillRect(box.x, box.y, box.w, box.h - 4);
-      ctx.fillRect(box.x + box.w - 6, box.y - 4, 8, 6);
+      ctx.fillRect(box.x, box.y, box.w, box.h - 6);
+      ctx.fillRect(box.x + box.w - 9, box.y - 6, 12, 9);
       ctx.fillStyle = themeColor("--color-base01");
-      ctx.fillRect(box.x + box.w - 1, box.y - 3, 2, 2);
+      ctx.fillRect(box.x + box.w - 2, box.y - 4, 3, 3);
       ctx.fillStyle = themeColor("--color-accent");
-      ctx.fillRect(box.x - 4, box.y + 2, 4, 4);
+      ctx.fillRect(box.x - 6, box.y + 3, 6, 6);
       if (this.#onGround()) {
         if (this.legUp) {
-          ctx.fillRect(box.x + 2, box.y + box.h - 4, 3, 4);
+          ctx.fillRect(box.x + 3, box.y + box.h - 6, 4, 6);
         } else {
-          ctx.fillRect(box.x + box.w - 5, box.y + box.h - 4, 3, 4);
+          ctx.fillRect(box.x + box.w - 8, box.y + box.h - 6, 4, 6);
         }
       } else {
-        ctx.fillRect(box.x + 2, box.y + box.h - 4, 3, 4);
-        ctx.fillRect(box.x + box.w - 5, box.y + box.h - 4, 3, 4);
+        ctx.fillRect(box.x + 3, box.y + box.h - 6, 4, 6);
+        ctx.fillRect(box.x + box.w - 8, box.y + box.h - 6, 4, 6);
       }
     }
     #spawnObstacle() {
       const canBird = this.score > 100;
       if (canBird && Math.random() < 0.3) {
         const high = Math.random() < 0.5;
-        const y3 = high ? this.#groundY() - DINO_H - 2 : this.#groundY() - BIRD_H;
+        const y3 = high ? this.#groundY() - DINO_H - 3 : this.#groundY() - BIRD_H;
         this.obstacles.push({ type: "bird", x: this.canvas.width, y: y3, flap: 0 });
       } else {
         const count = 1 + Math.floor(Math.random() * 3);
-        const h4 = 14 + Math.random() * 10;
+        const h4 = 21 + Math.random() * 15;
         this.obstacles.push({
           type: "cactus",
           x: this.canvas.width,
-          w: CACTUS_W * count + (count - 1) * 2,
+          w: CACTUS_W * count + (count - 1) * 3,
           h: h4
         });
       }
       const speed = this.#gameSpeed();
-      this.spawnTimer = (60 + Math.random() * 120) / speed;
+      this.spawnTimer = (90 + Math.random() * 180) / speed;
     }
     #drawObstacle(ctx, ob) {
       ctx.fillStyle = themeColor("--color-accent");
       if (ob.type === "cactus") {
         const y3 = this.#groundY() - ob.h;
-        for (let x3 = ob.x; x3 < ob.x + ob.w; x3 += CACTUS_W + 2) {
-          ctx.fillRect(x3 + 2, y3, CACTUS_W - 4, ob.h);
-          ctx.fillRect(x3, y3 + 4, 2, 6);
-          ctx.fillRect(x3 + CACTUS_W - 2, y3 + 7, 2, 6);
+        for (let x3 = ob.x; x3 < ob.x + ob.w; x3 += CACTUS_W + 3) {
+          ctx.fillRect(x3 + 3, y3, CACTUS_W - 6, ob.h);
+          ctx.fillRect(x3, y3 + 6, 3, 9);
+          ctx.fillRect(x3 + CACTUS_W - 3, y3 + 10, 3, 9);
         }
       } else {
-        ctx.fillRect(ob.x, ob.y, BIRD_W, 4);
-        ctx.fillRect(ob.x + BIRD_W - 4, ob.y - 2, 6, 3);
+        ctx.fillRect(ob.x, ob.y, BIRD_W, 6);
+        ctx.fillRect(ob.x + BIRD_W - 6, ob.y - 3, 9, 4);
         if (ob.flap < 150) {
-          ctx.fillRect(ob.x + 4, ob.y - 5, 4, 5);
+          ctx.fillRect(ob.x + 6, ob.y - 8, 6, 8);
         } else {
-          ctx.fillRect(ob.x + 4, ob.y + 4, 4, 5);
+          ctx.fillRect(ob.x + 6, ob.y + 6, 6, 8);
         }
       }
     }
@@ -12324,7 +12324,7 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
       if (ob.type === "cactus") {
         return { x: ob.x, y: this.#groundY() - ob.h, w: ob.w, h: ob.h };
       }
-      return { x: ob.x, y: ob.y - 2, w: BIRD_W, h: BIRD_H };
+      return { x: ob.x, y: ob.y - 3, w: BIRD_W, h: BIRD_H };
     }
     #collides(a5, b3) {
       return a5.x < b3.x + b3.w && a5.x + a5.w > b3.x && a5.y < b3.y + b3.h && a5.y + a5.h > b3.y;
@@ -12385,9 +12385,9 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
       this.#drawDino(ctx);
       this.#drawGround(ctx);
       ctx.fillStyle = themeColor("--color-accent");
-      ctx.font = "12px monospace";
+      ctx.font = "18px monospace";
       ctx.textAlign = "right";
-      ctx.fillText("" + this.score, this.canvas.width - 8, 16);
+      ctx.fillText("" + this.score, this.canvas.width - 12, 24);
     }
     #drawObstacles(ctx) {
       for (let ob of this.obstacles) {

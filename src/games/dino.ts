@@ -2,19 +2,19 @@ import { GameBase, GameOption } from "./games.js";
 import { registerWidget } from "../widgets/widgets.js";
 import { getThemeVar } from "../main-features/appearance/themes.js";
 
-const FLOOR_H = 15;
-const DINO_X = 40;
-const DINO_W = 16;
-const DINO_H = 20;
-const DINO_DUCK_H = 10;
-const GRAVITY = 0.0018;
-const JUMP_VEL = -0.52;
-const BASE_SPEED = 0.15;
-const MAX_SPEED = 0.35;
-const SPEEDUP = 0.00012;
-const CACTUS_W = 8;
-const BIRD_W = 14;
-const BIRD_H = 8;
+const FLOOR_H = 22;
+const DINO_X = 50;
+const DINO_W = 24;
+const DINO_H = 30;
+const DINO_DUCK_H = 15;
+const GRAVITY = 0.0027;
+const JUMP_VEL = -0.78;
+const BASE_SPEED = 0.225;
+const MAX_SPEED = 0.525;
+const SPEEDUP = 0.00018;
+const CACTUS_W = 12;
+const BIRD_W = 21;
+const BIRD_H = 12;
 const SCORE_RATE = 0.01;
 
 function themeColor(varName: string): string {
@@ -63,10 +63,10 @@ class DinoWidget extends GameBase {
     ctx.fillRect(0, h - FLOOR_H, w, FLOOR_H);
     ctx.strokeRect(0, h - FLOOR_H, w, FLOOR_H);
 
-    for (let i = 0; i < (w / 20) * 2; i++) {
+    for (let i = 0; i < (w / 30) * 2; i++) {
       ctx.beginPath();
-      ctx.moveTo(i * 20 + this.bgX, h - FLOOR_H);
-      ctx.lineTo(i * 20 + this.bgX + FLOOR_H, h);
+      ctx.moveTo(i * 30 + this.bgX, h - FLOOR_H);
+      ctx.lineTo(i * 30 + this.bgX + FLOOR_H, h);
       ctx.stroke();
     }
   }
@@ -90,21 +90,21 @@ class DinoWidget extends GameBase {
     ctx.fillStyle = themeColor("--color-accent");
 
 
-    ctx.fillRect(box.x, box.y, box.w, box.h - 4);
-    ctx.fillRect(box.x + box.w - 6, box.y - 4, 8, 6);
+    ctx.fillRect(box.x, box.y, box.w, box.h - 6);
+    ctx.fillRect(box.x + box.w - 9, box.y - 6, 12, 9);
     ctx.fillStyle = themeColor("--color-base01");
-    ctx.fillRect(box.x + box.w - 1, box.y - 3, 2, 2);
+    ctx.fillRect(box.x + box.w - 2, box.y - 4, 3, 3);
     ctx.fillStyle = themeColor("--color-accent");
-    ctx.fillRect(box.x - 4, box.y + 2, 4, 4);
+    ctx.fillRect(box.x - 6, box.y + 3, 6, 6);
     if (this.#onGround()) {
       if (this.legUp) {
-        ctx.fillRect(box.x + 2, box.y + box.h - 4, 3, 4);
+        ctx.fillRect(box.x + 3, box.y + box.h - 6, 4, 6);
       } else {
-        ctx.fillRect(box.x + box.w - 5, box.y + box.h - 4, 3, 4);
+        ctx.fillRect(box.x + box.w - 8, box.y + box.h - 6, 4, 6);
       }
     } else {
-      ctx.fillRect(box.x + 2, box.y + box.h - 4, 3, 4);
-      ctx.fillRect(box.x + box.w - 5, box.y + box.h - 4, 3, 4);
+      ctx.fillRect(box.x + 3, box.y + box.h - 6, 4, 6);
+      ctx.fillRect(box.x + box.w - 8, box.y + box.h - 6, 4, 6);
     }
   }
 
@@ -113,41 +113,41 @@ class DinoWidget extends GameBase {
     if (canBird && Math.random() < 0.3) {
       const high = Math.random() < 0.5;
       const y = high
-        ? this.#groundY() - DINO_H - 2
+        ? this.#groundY() - DINO_H - 3
         : this.#groundY() - BIRD_H;
       this.obstacles.push({ type: "bird", x: this.canvas.width, y: y, flap: 0 });
     } else {
       const count = 1 + Math.floor(Math.random() * 3);
-      const h = 14 + Math.random() * 10;
+      const h = 21 + Math.random() * 15;
       this.obstacles.push({
         type: "cactus",
         x: this.canvas.width,
-        w: CACTUS_W * count + (count - 1) * 2,
+        w: CACTUS_W * count + (count - 1) * 3,
         h: h,
       });
     }
 
     const speed = this.#gameSpeed();
-    this.spawnTimer = (60 + Math.random() * 120) / speed;
+    this.spawnTimer = (90 + Math.random() * 180) / speed;
   }
 
   #drawObstacle(ctx: CanvasRenderingContext2D, ob: Obstacle) {
     ctx.fillStyle = themeColor("--color-accent");
     if (ob.type === "cactus") {
       const y = this.#groundY() - ob.h;
-      for (let x = ob.x; x < ob.x + ob.w; x += CACTUS_W + 2) {
-        ctx.fillRect(x + 2, y, CACTUS_W - 4, ob.h);
+      for (let x = ob.x; x < ob.x + ob.w; x += CACTUS_W + 3) {
+        ctx.fillRect(x + 3, y, CACTUS_W - 6, ob.h);
         // arms
-        ctx.fillRect(x, y + 4, 2, 6);
-        ctx.fillRect(x + CACTUS_W - 2, y + 7, 2, 6);
+        ctx.fillRect(x, y + 6, 3, 9);
+        ctx.fillRect(x + CACTUS_W - 3, y + 10, 3, 9);
       }
     } else {
-      ctx.fillRect(ob.x, ob.y, BIRD_W, 4);
-      ctx.fillRect(ob.x + BIRD_W - 4, ob.y - 2, 6, 3);
+      ctx.fillRect(ob.x, ob.y, BIRD_W, 6);
+      ctx.fillRect(ob.x + BIRD_W - 6, ob.y - 3, 9, 4);
       if (ob.flap < 150) {
-        ctx.fillRect(ob.x + 4, ob.y - 5, 4, 5);
+        ctx.fillRect(ob.x + 6, ob.y - 8, 6, 8);
       } else {
-        ctx.fillRect(ob.x + 4, ob.y + 4, 4, 5);
+        ctx.fillRect(ob.x + 6, ob.y + 6, 6, 8);
       }
     }
   }
@@ -156,7 +156,7 @@ class DinoWidget extends GameBase {
     if (ob.type === "cactus") {
       return { x: ob.x, y: this.#groundY() - ob.h, w: ob.w, h: ob.h };
     }
-    return { x: ob.x, y: ob.y - 2, w: BIRD_W, h: BIRD_H };
+    return { x: ob.x, y: ob.y - 3, w: BIRD_W, h: BIRD_H };
   }
 
   #collides(a: Box, b: Box): boolean {
@@ -230,9 +230,9 @@ class DinoWidget extends GameBase {
     this.#drawGround(ctx);
 
     ctx.fillStyle = themeColor("--color-accent");
-    ctx.font = "12px monospace";
+    ctx.font = "18px monospace";
     ctx.textAlign = "right";
-    ctx.fillText("" + this.score, this.canvas.width - 8, 16);
+    ctx.fillText("" + this.score, this.canvas.width - 12, 24);
   }
 
   #drawObstacles(ctx: CanvasRenderingContext2D) {
