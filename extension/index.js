@@ -12384,10 +12384,6 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
       this.#drawObstacles(ctx);
       this.#drawDino(ctx);
       this.#drawGround(ctx);
-      ctx.fillStyle = themeColor("--color-accent");
-      ctx.font = "18px monospace";
-      ctx.textAlign = "right";
-      ctx.fillText("" + this.score, this.canvas.width - 12, 24);
     }
     #drawObstacles(ctx) {
       for (let ob of this.obstacles) {
