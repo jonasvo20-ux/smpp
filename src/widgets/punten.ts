@@ -86,7 +86,7 @@ class PuntenWidget extends WidgetBase {
     if (waarde >= UITSTEKEND_GRENS) return "Uitstekend bezig! 🎉";
     if (waarde >= GOED_BEZIG_GRENS) return "Goed bezig, blijf zo verdergaan!";
     if (waarde >= VOLDOENDE_GRENS) return "Het kan beter, blijf oefenen.";
-    if (waarde >= ONVOLDOENDE_GRENS) return "dit is een buis kom op niet opgeven";
+    if (waarde >= ONVOLDOENDE_GRENS) return "Dit is een buis kom op niet opgeven";
     return "Het is tijd om hulp te vragen en te verbeteren.";
   }
 
@@ -199,11 +199,6 @@ class PuntenWidget extends WidgetBase {
     title.classList.add("punten-preview-title");
     title.innerText = "Punten";
     previewContainer.appendChild(title);
-
-    const subtitle = document.createElement("div");
-    subtitle.classList.add("punten-preview-subtitle");
-    subtitle.innerText = "Gemiddeldes & voortgang";
-    previewContainer.appendChild(subtitle);
 
     const image = document.createElement("img");
     image.src = getExtensionImage("icons/widgets/punten_490x626.png");
