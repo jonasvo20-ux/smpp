@@ -309,6 +309,9 @@ hr.separator.todo-column__pinned__seperator {
   background: var(--color-base01) !important;
   border-radius: 1rem !important;
   color: var(--color-text) !important;
+  border-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .glass .planner-header .selectview,
