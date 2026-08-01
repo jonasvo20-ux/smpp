@@ -292,6 +292,30 @@ hr.separator.todo-column__pinned__seperator {
 .render-on-mode-change:hover {
   border-color: transparent !important;
 }
+
+/* view select (Weekweergave) - hash-independent so it survives smartschool updates */
+.planner-header .header__borderdropdowncontainer button,
+.planner-header .header__borderdropdowncontainer select,
+.planner-header .render-on-mode-change button,
+.planner-header .render-on-mode-change select,
+.planner-header .selectview button {
+  background: transparent !important;
+  color: var(--color-text) !important;
+  border-color: transparent !important;
+}
+
+.planner-header .selectview,
+.planner-header .render-on-mode-change {
+  background: var(--color-base01) !important;
+  border-radius: 1rem !important;
+  color: var(--color-text) !important;
+}
+
+.glass .planner-header .selectview,
+.glass .planner-header .render-on-mode-change {
+  background: var(--darken-background) !important;
+  backdrop-filter: var(--small-blur) !important;
+}
 .glass .twinbutton {
   background-color: var(--darken-background) !important;
   backdrop-filter: var(--small-blur) !important;
@@ -310,12 +334,12 @@ hr.separator.todo-column__pinned__seperator {
   font-size: 1.2rem !important;
 }
 
-.toggleCollapseBtn-edz3i {
+[class*="toggleCollapseBtn-"] {
   border-radius: 1rem !important;
 }
 
-.toggleCollapseBtn-edz3i:hover,
-.toggleCollapseBtn-edz3i:focus {
+[class*="toggleCollapseBtn-"]:hover,
+[class*="toggleCollapseBtn-"]:focus {
   background: var(--darken-background) !important;
   backdrop-filter: var(--small-blur) !important;
 }
@@ -1169,83 +1193,83 @@ button.filter-btn.c-red-combo-hover--100:hover {
   border-left: none !important;
 }
 
-.sidebar-PJxvI {
+/* planner sidebar - smartschool rotates the class hashes (sidebar-PJxvI, button-mJfIq, ...)
+   on every update, so anchor on the stable data-collapsed / data-selected attributes instead */
+[class*="sidebar-"][data-collapsed] {
   background: transparent !important;
   border-color: transparent !important;
   transition-property: width, background, border-color;
 }
-.enableAnimations .button-mJfIq {
+.enableAnimations [class*="sidebar-"][data-collapsed] [class*="button-"] {
   transition-property: all !important;
   transition: 0.1s ease-in-out !important;
 }
-.button-mJfIq {
+[class*="sidebar-"][data-collapsed] [class*="button-"] {
   border-radius: 1rem !important;
   border-width: 2px !important;
 }
 
-.itemsWrapper-TTIS7 {
+[class*="sidebar-"][data-collapsed] [class*="itemsWrapper-"] {
   gap: 0.2rem !important;
   padding-left: 0.2rem !important;
   padding-top: 0.2rem !important;
 }
 
-.glass .sidebar-PJxvI[data-collapsed="false"] {
+.glass [class*="sidebar-"][data-collapsed="false"] {
   backdrop-filter: var(--medium-blur) !important;
   background: var(--darken-background) !important;
 }
 
-.glass .button-mJfIq:hover,
-.glass .optionWrapper-IEDUX[data-selected="true"] .button-mJfIq:hover {
+.glass [class*="sidebar-"][data-collapsed] [class*="button-"]:hover {
   background: var(--darken-background) !important;
   backdrop-filter: var(--medium-blur) !important;
 }
 
-.button-mJfIq:hover,
-.optionWrapper-IEDUX[data-selected="true"] .button-mJfIq:hover {
+[class*="sidebar-"][data-collapsed] [class*="button-"]:hover {
   border-color: var(--color-accent) !important;
   background: var(--color-base02) !important;
 }
 
-.sidebar-PJxvI[data-collapsed="false"] {
+[class*="sidebar-"][data-collapsed="false"] {
   border-right: 2px solid var(--color-base02) !important;
   background: var(--color-base01) !important;
 }
 
-.spacer-w0RDl:before,
-.spacer-w0RDl:after {
+[class*="sidebar-"][data-collapsed] [class*="spacer-"]:before,
+[class*="sidebar-"][data-collapsed] [class*="spacer-"]:after {
   background: transparent !important;
 }
 
-.optionWrapper-IEDUX {
+[class*="sidebar-"][data-collapsed] [class*="optionWrapper-"] {
   border-width: 2px !important;
 }
 
-.optionWrapper-IEDUX[data-selected="true"] {
+[class*="sidebar-"][data-collapsed] [class*="optionWrapper-"][data-selected="true"] {
   background: transparent !important;
   border-color: transparent !important;
 }
 
-.optionWrapper-IEDUX[data-selected="true"]:after,
-.optionWrapper-IEDUX[data-selected="true"]:before {
+[class*="sidebar-"][data-collapsed] [class*="optionWrapper-"][data-selected="true"]:after,
+[class*="sidebar-"][data-collapsed] [class*="optionWrapper-"][data-selected="true"]:before {
   display: none !important;
 }
 
-.optionWrapper-IEDUX[data-selected="false"] .button-mJfIq:focus {
+[class*="optionWrapper-"][data-selected="false"] [class*="button-"]:focus {
   border-color: transparent !important;
   background: transparent !important;
 }
-.optionWrapper-IEDUX[data-selected="false"] .button-mJfIq:focus-visible {
+[class*="optionWrapper-"][data-selected="false"] [class*="button-"]:focus-visible {
   border-color: var(--color-accent) !important;
   background: var(--darken-background) !important;
   backdrop-filter: var(--medium-blur) !important;
 }
 
-.optionWrapper-IEDUX[data-selected="true"] .button-mJfIq {
+[class*="optionWrapper-"][data-selected="true"] [class*="button-"] {
   background-color: var(--darken-background) !important;
   border-color: var(--color-base02) !important;
 }
 
-.optionWrapper-IEDUX[data-selected="false"] .button-mJfIq:active {
+[class*="optionWrapper-"][data-selected="false"] [class*="button-"]:active {
   box-shadow: none !important;
   background: var(--darken-background) !important;
   backdrop-filter: var(--medium-blur) !important;
