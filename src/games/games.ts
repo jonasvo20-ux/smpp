@@ -285,23 +285,25 @@ export class GameBase extends WidgetBase {
   // Override us
 
   // (required)
-  get title() {}
+  get title(): string {
+    return "";
+  }
 
   async onGameStart() {}
   // Called when the game to update (same on all devices)
   onGameTick() {}
   // Called when the game needs to render a new frame (dt is time since last
   // frame)
-  onGameDraw(ctx, deltaTime) {}
-  async onKeyDown(e) {}
-  async onKeyUp(e) {}
-  async onMouse(e) {}
+  onGameDraw(ctx: CanvasRenderingContext2D, deltaTime: number) {}
+  async onKeyDown(e: KeyboardEvent) {}
+  async onKeyUp(e: KeyboardEvent) {}
+  async onMouse(e: MouseEvent) {}
 
-  get tickSpeed() {
+  get tickSpeed(): number {
     return 60;
   }
 
-  get options() {
+  get options(): GameOption[] {
     return [];
   }
 }

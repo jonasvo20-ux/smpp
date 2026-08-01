@@ -16,6 +16,7 @@ import "../games/snake.ts";
 import "../games/pong.ts";
 import "../games/tetris.ts";
 import "../games/space-invaders.ts";
+import "../games/dino.ts";
 // Widgets
 import "../widgets/tutorial-widget.ts";
 import "../widgets/assignments.ts";

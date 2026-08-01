@@ -10846,6 +10846,7 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
     // Override us
     // (required)
     get title() {
+      return "";
     }
     async onGameStart() {
     }
@@ -12191,6 +12192,227 @@ Your version: <b>${data.plantVersion}</b> is not the newest available version`;
     }
   };
   registerWidget(new SpaceInvadersWidget());
+
+  // src/games/dino.ts
+  var FLOOR_H2 = 15;
+  var DINO_X = 40;
+  var DINO_W = 16;
+  var DINO_H = 20;
+  var DINO_DUCK_H = 10;
+  var GRAVITY2 = 18e-4;
+  var JUMP_VEL = -0.52;
+  var BASE_SPEED = 0.15;
+  var MAX_SPEED2 = 0.35;
+  var SPEEDUP = 12e-5;
+  var CACTUS_W = 8;
+  var BIRD_W = 14;
+  var BIRD_H = 8;
+  var SCORE_RATE = 0.01;
+  function themeColor(varName) {
+    return getThemeVar(varName) ?? "#000";
+  }
+  var DinoWidget = class extends GameBase {
+    dinoY = 0;
+    dinoVel = 0;
+    ducking = false;
+    jumpQueued = false;
+    obstacles = [];
+    spawnTimer = 0;
+    scoreAcc = 0;
+    bgX = 0;
+    legTimer = 0;
+    legUp = false;
+    get title() {
+      return "Dino++";
+    }
+    get options() {
+      return [GameOption.slider("speed", "Speed:", 50, 300, 100)];
+    }
+    #groundY() {
+      return this.canvas.height - FLOOR_H2;
+    }
+    #gameSpeed() {
+      const s4 = Math.min(BASE_SPEED + this.score * SPEEDUP, MAX_SPEED2);
+      return s4 * this.getOpt("speed") * 0.01;
+    }
+    #drawGround(ctx) {
+      let w2 = this.canvas.width;
+      let h4 = this.canvas.height;
+      ctx.fillStyle = themeColor("--color-accent");
+      ctx.strokeStyle = themeColor("--color-base01");
+      ctx.lineWidth = 1;
+      ctx.fillRect(0, h4 - FLOOR_H2, w2, FLOOR_H2);
+      ctx.strokeRect(0, h4 - FLOOR_H2, w2, FLOOR_H2);
+      for (let i5 = 0; i5 < w2 / 20 * 2; i5++) {
+        ctx.beginPath();
+        ctx.moveTo(i5 * 20 + this.bgX, h4 - FLOOR_H2);
+        ctx.lineTo(i5 * 20 + this.bgX + FLOOR_H2, h4);
+        ctx.stroke();
+      }
+    }
+    #dinoHitbox() {
+      const h4 = this.ducking && this.#onGround() ? DINO_DUCK_H : DINO_H;
+      return {
+        x: DINO_X,
+        y: this.dinoY - h4,
+        w: DINO_W,
+        h: h4
+      };
+    }
+    #onGround() {
+      return this.dinoY >= this.#groundY();
+    }
+    #drawDino(ctx) {
+      const box = this.#dinoHitbox();
+      ctx.fillStyle = themeColor("--color-accent");
+      ctx.fillRect(box.x, box.y, box.w, box.h - 4);
+      ctx.fillRect(box.x + box.w - 6, box.y - 4, 8, 6);
+      ctx.fillStyle = themeColor("--color-base01");
+      ctx.fillRect(box.x + box.w - 1, box.y - 3, 2, 2);
+      ctx.fillStyle = themeColor("--color-accent");
+      ctx.fillRect(box.x - 4, box.y + 2, 4, 4);
+      if (this.#onGround()) {
+        if (this.legUp) {
+          ctx.fillRect(box.x + 2, box.y + box.h - 4, 3, 4);
+        } else {
+          ctx.fillRect(box.x + box.w - 5, box.y + box.h - 4, 3, 4);
+        }
+      } else {
+        ctx.fillRect(box.x + 2, box.y + box.h - 4, 3, 4);
+        ctx.fillRect(box.x + box.w - 5, box.y + box.h - 4, 3, 4);
+      }
+    }
+    #spawnObstacle() {
+      const canBird = this.score > 100;
+      if (canBird && Math.random() < 0.3) {
+        const high = Math.random() < 0.5;
+        const y3 = high ? this.#groundY() - DINO_H - 2 : this.#groundY() - BIRD_H;
+        this.obstacles.push({ type: "bird", x: this.canvas.width, y: y3, flap: 0 });
+      } else {
+        const count = 1 + Math.floor(Math.random() * 3);
+        const h4 = 14 + Math.random() * 10;
+        this.obstacles.push({
+          type: "cactus",
+          x: this.canvas.width,
+          w: CACTUS_W * count + (count - 1) * 2,
+          h: h4
+        });
+      }
+      const speed = this.#gameSpeed();
+      this.spawnTimer = (60 + Math.random() * 120) / speed;
+    }
+    #drawObstacle(ctx, ob) {
+      ctx.fillStyle = themeColor("--color-accent");
+      if (ob.type === "cactus") {
+        const y3 = this.#groundY() - ob.h;
+        for (let x3 = ob.x; x3 < ob.x + ob.w; x3 += CACTUS_W + 2) {
+          ctx.fillRect(x3 + 2, y3, CACTUS_W - 4, ob.h);
+          ctx.fillRect(x3, y3 + 4, 2, 6);
+          ctx.fillRect(x3 + CACTUS_W - 2, y3 + 7, 2, 6);
+        }
+      } else {
+        ctx.fillRect(ob.x, ob.y, BIRD_W, 4);
+        ctx.fillRect(ob.x + BIRD_W - 4, ob.y - 2, 6, 3);
+        if (ob.flap < 150) {
+          ctx.fillRect(ob.x + 4, ob.y - 5, 4, 5);
+        } else {
+          ctx.fillRect(ob.x + 4, ob.y + 4, 4, 5);
+        }
+      }
+    }
+    #obstacleHitbox(ob) {
+      if (ob.type === "cactus") {
+        return { x: ob.x, y: this.#groundY() - ob.h, w: ob.w, h: ob.h };
+      }
+      return { x: ob.x, y: ob.y - 2, w: BIRD_W, h: BIRD_H };
+    }
+    #collides(a5, b3) {
+      return a5.x < b3.x + b3.w && a5.x + a5.w > b3.x && a5.y < b3.y + b3.h && a5.y + a5.h > b3.y;
+    }
+    async onGameStart() {
+      this.dinoY = this.#groundY();
+      this.dinoVel = 0;
+      this.ducking = false;
+      this.jumpQueued = false;
+      this.obstacles = [];
+      this.spawnTimer = 500;
+      this.scoreAcc = 0;
+      this.bgX = 0;
+      this.legTimer = 0;
+      this.legUp = false;
+    }
+    onGameDraw(ctx, dt) {
+      ctx.fillStyle = themeColor("--color-base01");
+      ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      const speed = this.#gameSpeed();
+      if (this.jumpQueued && this.#onGround()) {
+        this.dinoVel = JUMP_VEL;
+        this.dinoY += this.dinoVel * dt;
+      }
+      this.jumpQueued = false;
+      if (!this.#onGround()) {
+        this.dinoVel += GRAVITY2 * dt * (this.ducking ? 3 : 1);
+        this.dinoY = Math.min(this.dinoY + this.dinoVel * dt, this.#groundY());
+      }
+      this.legTimer += dt;
+      if (this.legTimer > 100) {
+        this.legTimer = 0;
+        this.legUp = !this.legUp;
+      }
+      this.spawnTimer -= dt;
+      if (this.spawnTimer <= 0) {
+        this.#spawnObstacle();
+      }
+      const dinoBox = this.#dinoHitbox();
+      for (let ob of this.obstacles) {
+        ob.x -= speed * dt;
+        if (ob.type === "bird") {
+          ob.x -= speed * dt * 0.2;
+          ob.flap = (ob.flap + dt) % 300;
+        }
+        if (this.#collides(dinoBox, this.#obstacleHitbox(ob))) {
+          this.stopGame();
+        }
+      }
+      this.obstacles = this.obstacles.filter((ob) => ob.x > -BIRD_W * 3);
+      this.scoreAcc += dt * SCORE_RATE * this.getOpt("speed") * 0.01;
+      if (this.scoreAcc >= 1) {
+        this.score += Math.floor(this.scoreAcc);
+        this.scoreAcc -= Math.floor(this.scoreAcc);
+      }
+      this.bgX = (this.bgX - speed * dt) % this.canvas.width;
+      this.#drawObstacles(ctx);
+      this.#drawDino(ctx);
+      this.#drawGround(ctx);
+      ctx.fillStyle = themeColor("--color-accent");
+      ctx.font = "12px monospace";
+      ctx.textAlign = "right";
+      ctx.fillText("" + this.score, this.canvas.width - 8, 16);
+    }
+    #drawObstacles(ctx) {
+      for (let ob of this.obstacles) {
+        this.#drawObstacle(ctx, ob);
+      }
+    }
+    async onMouse(_e) {
+      this.jumpQueued = true;
+    }
+    async onKeyDown(e5) {
+      if (e5.code === "Space" || e5.code === "ArrowUp") {
+        this.jumpQueued = true;
+        e5.preventDefault();
+      } else if (e5.code === "ArrowDown") {
+        this.ducking = true;
+        e5.preventDefault();
+      }
+    }
+    async onKeyUp(e5) {
+      if (e5.code === "ArrowDown") {
+        this.ducking = false;
+      }
+    }
+  };
+  registerWidget(new DinoWidget());
 
   // src/widgets/tutorial-widget.ts
   var TutorialWidget = class extends WidgetBase {
